@@ -24,6 +24,10 @@ suspend fun checkIfUserExists(email: String): Boolean {
     return users.findOne(User::email eq email) != null
 }
 
+suspend fun checkIfRestaurantExists(name: String): Boolean {
+    return restaurants.findOne(Restaurant::name eq name) != null
+}
+
 suspend fun insertRestaurant(restaurant: Restaurant): Boolean {
     val restaurantExists = restaurants.findOne(Restaurant::name eq restaurant.name) != null
     if(!restaurantExists){
@@ -32,8 +36,8 @@ suspend fun insertRestaurant(restaurant: Restaurant): Boolean {
     return false
 }
 
-suspend fun deleteRestaurant(restaurant: Restaurant): Boolean {
-    return restaurants.deleteOneById(restaurant.id).wasAcknowledged()
+suspend fun deleteRestaurant(restaurantId: String): Boolean {
+    return restaurants.deleteOne(Restaurant::id eq restaurantId).wasAcknowledged()
 }
 
 

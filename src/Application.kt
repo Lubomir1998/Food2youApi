@@ -1,5 +1,7 @@
 package com.example
 
+import com.example.routes.registerRoute
+import com.example.routes.restaurantRoute
 import io.ktor.application.*
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -25,7 +27,8 @@ fun Application.module(testing: Boolean = false) {
     }
 
     install(Routing) {
-
+        registerRoute()
+        restaurantRoute()
     }
 
 }
