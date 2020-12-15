@@ -1,7 +1,10 @@
 package com.example.routes
 
+import com.example.data.checkIfRestaurantAccountExists
 import com.example.data.checkIfUserExists
+import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
+import com.example.data.registerRestaurant
 import com.example.data.registerUser
 import com.example.data.requests.AccountRequest
 import com.example.data.responses.SimpleResponse
@@ -18,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 fun Route.registerRoute() {
+
     route("/registerUser") {
         post {
             withContext(Dispatchers.IO) {
@@ -41,4 +45,29 @@ fun Route.registerRoute() {
             }
         }
     }
+
+    route("/registerRestaurant"){
+        post {
+            withContext(Dispatchers.IO) {
+                val request = try {
+                    call.receive<AccountRequest>()
+                } catch (e: ContentTransformationException) {
+                    call.respond(BadRequest)
+                    return@withContext
+                }
+                val restaurantExists = checkIfRestaurantAccountExists(request.email)
+                if(!restaurantExists) {
+                    if (registerRestaurant(RestaurantAccount(request.email, request.password))) {
+                        call.respond(OK, SimpleResponse(true, "Successfully created account"))
+                    } else {
+                        call.respond(OK, SimpleResponse(false, "An unknown error occurred"))
+                    }
+                }
+                else {
+                    call.respond(OK, SimpleResponse(false, "Account already exists"))
+                }
+            }
+        }
+    }
+
 }

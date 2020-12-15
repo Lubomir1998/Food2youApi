@@ -1,8 +1,10 @@
 package com.example
 
+import com.example.routes.loginRoute
 import com.example.routes.registerRoute
 import com.example.routes.restaurantRoute
 import io.ktor.application.*
+import io.ktor.auth.Authentication
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
@@ -25,9 +27,12 @@ fun Application.module(testing: Boolean = false) {
             setPrettyPrinting()
         }
     }
+    install(Authentication){
 
+    }
     install(Routing) {
         registerRoute()
+        loginRoute()
         restaurantRoute()
     }
 

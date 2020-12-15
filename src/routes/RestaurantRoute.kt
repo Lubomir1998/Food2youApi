@@ -1,11 +1,14 @@
 package com.example.routes
 
+import com.example.data.addReviewToRestaurant
 import com.example.data.checkIfRestaurantExists
 import com.example.data.collections.Restaurant
 import com.example.data.deleteRestaurant
 import com.example.data.insertRestaurant
+import com.example.data.requests.AddPreviewRequest
 import com.example.data.requests.DeleteRestaurantRequest
 import io.ktor.application.call
+import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.OK
@@ -21,43 +24,73 @@ import kotlinx.coroutines.withContext
 fun Route.restaurantRoute() {
 
     route("/addRestaurant") {
-        post {
-            withContext(Dispatchers.IO) {
-                val restaurant = try {
-                    call.receive<Restaurant>()
-                } catch (e: ConcurrentModificationException) {
-                    call.respond(BadRequest)
-                    return@withContext
-                }
-
-                val restaurantExists = checkIfRestaurantExists(restaurant.name)
-                if(!restaurantExists) {
-                    if(insertRestaurant(restaurant)) {
-                        call.respond(OK)
+//        authenticate {
+            post {
+                withContext(Dispatchers.IO) {
+                    val restaurant = try {
+                        call.receive<Restaurant>()
+                    } catch (e: ConcurrentModificationException) {
+                        call.respond(BadRequest)
+                        return@withContext
                     }
-                    else {
+
+                    val restaurantExists = checkIfRestaurantExists(restaurant.name)
+                    if (!restaurantExists) {
+                        if (insertRestaurant(restaurant)) {
+                            call.respond(OK)
+                        } else {
+                            call.respond(Conflict)
+                        }
+                    }
+                }
+            }
+//        }
+    }
+
+    route("/deleteRestaurant") {
+//        authenticate {
+            post {
+                withContext(Dispatchers.IO) {
+                    val request = try {
+                        call.receive<DeleteRestaurantRequest>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+                    if (deleteRestaurant(request.id)) {
+                        call.respond(OK)
+                    } else {
                         call.respond(Conflict)
                     }
                 }
             }
-        }
+//        }
     }
-    route("/deleteRestaurant") {
-        post {
-            withContext(Dispatchers.IO) {
-                val request = try {
-                    call.receive<DeleteRestaurantRequest>()
-                } catch (e: ContentTransformationException) {
-                    call.respond(BadRequest)
-                    return@withContext
-                }
-                if(deleteRestaurant(request.id)) {
-                    call.respond(OK)
-                }
-                else {
-                    call.respond(Conflict)
+
+    route("/addPreview"){
+//        authenticate {
+            post {
+                withContext(Dispatchers.IO) {
+                    val request = try {
+                        call.receive<AddPreviewRequest>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    if (request.preview.isEmpty()) {
+                        call.respond(Conflict, "Please, type something")
+                        return@withContext
+                    }
+
+                    if (addReviewToRestaurant(request.id, request.preview)) {
+                        call.respond(OK)
+                    } else {
+                        call.respond(Conflict)
+                    }
                 }
             }
-        }
+//        }
     }
+
 }
