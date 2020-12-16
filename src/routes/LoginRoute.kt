@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.data.isPasswordCorrect
+import com.example.data.checkIfPasswordIsCorrect
 import com.example.data.requests.AccountRequest
 import com.example.data.responses.SimpleResponse
 import io.ktor.application.call
@@ -26,7 +26,7 @@ fun Route.loginRoute() {
                     return@withContext
                 }
 
-                val isPasswordCorrect = isPasswordCorrect(request.email, request.password)
+                val isPasswordCorrect = checkIfPasswordIsCorrect(request.email, request.password)
 
                 if(isPasswordCorrect) {
                     call.respond(OK, SimpleResponse(true, "Successfully logged in"))

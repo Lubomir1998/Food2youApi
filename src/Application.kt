@@ -1,17 +1,15 @@
 package com.example
 
+import com.example.data.checkIfPasswordIsCorrect
 import com.example.routes.loginRoute
 import com.example.routes.registerRoute
 import com.example.routes.restaurantRoute
 import io.ktor.application.*
-import io.ktor.auth.Authentication
+import io.ktor.auth.*
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.Route
 import io.ktor.routing.Routing
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -28,7 +26,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
     install(Authentication){
-
+        authenticate()
     }
     install(Routing) {
         registerRoute()
@@ -38,3 +36,16 @@ fun Application.module(testing: Boolean = false) {
 
 }
 
+private fun Authentication.Configuration.authenticate() {
+    basic {
+        realm = "MyServer"
+        validate { credentials ->
+            if(checkIfPasswordIsCorrect(credentials.name, credentials.password)) {
+                UserIdPrincipal(credentials.name)
+            }
+            else {
+                null
+            }
+        }
+    }
+}

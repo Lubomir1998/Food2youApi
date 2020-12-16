@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 fun Route.restaurantRoute() {
 
     route("/addRestaurant") {
-//        authenticate {
+        authenticate {
             post {
                 withContext(Dispatchers.IO) {
                     val restaurant = try {
@@ -44,11 +44,11 @@ fun Route.restaurantRoute() {
                     }
                 }
             }
-//        }
+        }
     }
 
     route("/deleteRestaurant") {
-//        authenticate {
+        authenticate {
             post {
                 withContext(Dispatchers.IO) {
                     val request = try {
@@ -64,11 +64,11 @@ fun Route.restaurantRoute() {
                     }
                 }
             }
-//        }
+        }
     }
 
     route("/addPreview"){
-//        authenticate {
+        authenticate {
             post {
                 withContext(Dispatchers.IO) {
                     val request = try {
@@ -90,7 +90,7 @@ fun Route.restaurantRoute() {
                     }
                 }
             }
-//        }
+        }
     }
 
 }

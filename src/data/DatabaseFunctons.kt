@@ -3,6 +3,7 @@ package com.example.data
 import com.example.data.collections.Restaurant
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
+import com.example.security.checkHashForPassword
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
@@ -22,9 +23,9 @@ suspend fun registerRestaurant(restaurantAccount: RestaurantAccount): Boolean {
     return restaurantAccounts.insertOne(restaurantAccount).wasAcknowledged()
 }
 
-suspend fun isPasswordCorrect(email: String, givenPassword: String): Boolean {
+suspend fun checkIfPasswordIsCorrect(email: String, givenPassword: String): Boolean {
     val actualPassword = users.findOne(User::email eq email)?.password ?: return false
-    return actualPassword == givenPassword
+    return checkHashForPassword(givenPassword, actualPassword)
 }
 
 suspend fun checkIfUserExists(email: String): Boolean {
