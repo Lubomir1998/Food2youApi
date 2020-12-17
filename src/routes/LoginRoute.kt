@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.data.checkIfPasswordIsCorrect
+import com.example.data.checkIfPasswordIsCorrectRestaurants
 import com.example.data.requests.AccountRequest
 import com.example.data.responses.SimpleResponse
 import io.ktor.application.call
@@ -36,6 +37,29 @@ fun Route.loginRoute() {
                 }
 
             }
+        }
+    }
+
+    route("/loginRes") {
+        post {
+            withContext(Dispatchers.IO) {
+                val request = try {
+                    call.receive<AccountRequest>()
+                } catch (e: ContentTransformationException) {
+                    call.respond(BadRequest)
+                    return@withContext
+                }
+
+                val isPasswordCorrect = checkIfPasswordIsCorrectRestaurants(request.email, request.password)
+
+                if(isPasswordCorrect) {
+                    call.respond(OK, SimpleResponse(true, "Successfully logged in"))
+                }
+                else {
+                    call.respond(OK, SimpleResponse(false, "Email or password incorrect"))
+                }
+            }
+
         }
     }
 }
