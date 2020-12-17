@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.data.checkIfPasswordIsCorrect
+import com.example.data.checkIfPasswordIsCorrectRestaurants
 import com.example.routes.loginRoute
 import com.example.routes.registerRoute
 import com.example.routes.restaurantRoute
@@ -27,6 +28,7 @@ fun Application.module(testing: Boolean = false) {
     }
     install(Authentication){
         authenticate()
+        authenticateOwners()
     }
     install(Routing) {
         registerRoute()
@@ -36,11 +38,27 @@ fun Application.module(testing: Boolean = false) {
 
 }
 
+
+
 private fun Authentication.Configuration.authenticate() {
-    basic {
+    basic(name = "users") {
         realm = "MyServer"
         validate { credentials ->
             if(checkIfPasswordIsCorrect(credentials.name, credentials.password)) {
+                UserIdPrincipal(credentials.name)
+            }
+            else {
+                null
+            }
+        }
+    }
+}
+
+private fun Authentication.Configuration.authenticateOwners() {
+    basic(name = "owners") {
+        realm = "My_Server"
+        validate { credentials ->
+            if(checkIfPasswordIsCorrectRestaurants(credentials.name, credentials.password)) {
                 UserIdPrincipal(credentials.name)
             }
             else {

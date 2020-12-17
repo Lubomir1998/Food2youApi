@@ -58,7 +58,7 @@ fun Route.registerRoute() {
                 }
                 val restaurantExists = checkIfRestaurantAccountExists(request.email)
                 if(!restaurantExists) {
-                    if (registerRestaurant(RestaurantAccount(request.email, request.password))) {
+                    if (registerRestaurant(RestaurantAccount(request.email, getHashWithSalt(request.password)))) {
                         call.respond(OK, SimpleResponse(true, "Successfully created account"))
                     } else {
                         call.respond(OK, SimpleResponse(false, "An unknown error occurred"))

@@ -28,6 +28,11 @@ suspend fun checkIfPasswordIsCorrect(email: String, givenPassword: String): Bool
     return checkHashForPassword(givenPassword, actualPassword)
 }
 
+suspend fun checkIfPasswordIsCorrectRestaurants(email: String, givenPassword: String): Boolean {
+    val actualPassword = restaurantAccounts.findOne(RestaurantAccount::email eq email)?.password ?: return false
+    return checkHashForPassword(givenPassword, actualPassword)
+}
+
 suspend fun checkIfUserExists(email: String): Boolean {
     return users.findOne(User::email eq email) != null
 }
