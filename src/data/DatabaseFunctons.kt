@@ -1,5 +1,6 @@
 package com.example.data
 
+import com.example.data.collections.Food
 import com.example.data.collections.Restaurant
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
@@ -14,6 +15,7 @@ val database = client.getDatabase("Food2youDB")
 val users = database.getCollection<User>()
 val restaurants = database.getCollection<Restaurant>()
 val restaurantAccounts = database.getCollection<RestaurantAccount>()
+val foods = database.getCollection<Food>()
 
 suspend fun registerUser(user: User): Boolean {
     return users.insertOne(user).wasAcknowledged()
@@ -63,6 +65,14 @@ suspend fun addReviewToRestaurant(id: String, preview: String): Boolean {
 }
 
 
+suspend fun addFoodToRestaurant(food: Food): Boolean {
+    return foods.insertOne(food).wasAcknowledged()
+}
+
+
+suspend fun getAllFoodForARestaurant(restaurantName: String): List<Food> {
+    return foods.find(Food::restaurantName eq restaurantName).toList()
+}
 
 
 

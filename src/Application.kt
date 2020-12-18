@@ -2,6 +2,7 @@ package com.example
 
 import com.example.data.checkIfPasswordIsCorrect
 import com.example.data.checkIfPasswordIsCorrectRestaurants
+import com.example.routes.foodRoute
 import com.example.routes.loginRoute
 import com.example.routes.registerRoute
 import com.example.routes.restaurantRoute
@@ -34,6 +35,7 @@ fun Application.module(testing: Boolean = false) {
         registerRoute()
         loginRoute()
         restaurantRoute()
+        foodRoute()
     }
 
 }

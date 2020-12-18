@@ -13,7 +13,7 @@ data class Restaurant(
     val imgUrl: String,
     val previews: List<String>,
     val users: List<String>,
-    val owners: List<String>,
+    val owner: String,
     @BsonId
     val id: String = ObjectId().toString()
 )
