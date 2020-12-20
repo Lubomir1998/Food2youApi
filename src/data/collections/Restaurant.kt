@@ -9,7 +9,7 @@ data class Restaurant(
     val kitchen: String,
     val deliveryPrice: Float,
     val deliveryTimeMinutes: Int,
-    val minimalPrice: Int,
+    val minimalPrice: Float,
     val imgUrl: String,
     val previews: List<String>,
     val users: List<String>,

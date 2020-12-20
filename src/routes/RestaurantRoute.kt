@@ -1,14 +1,11 @@
 package com.example.routes
 
-import com.example.data.addReviewToRestaurant
-import com.example.data.checkIfRestaurantExists
+import com.example.data.*
 import com.example.data.collections.Restaurant
-import com.example.data.deleteRestaurant
-import com.example.data.insertRestaurant
 import com.example.data.requests.AddPreviewRequest
 import com.example.data.requests.DeleteRestaurantRequest
 import io.ktor.application.call
-import io.ktor.auth.authenticate
+import io.ktor.auth.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.OK
@@ -33,15 +30,19 @@ fun Route.restaurantRoute() {
                         call.respond(BadRequest)
                         return@withContext
                     }
+                    val owner = call.principal<UserIdPrincipal>()!!.name
 
-                    val restaurantExists = checkIfRestaurantExists(restaurant.name)
-                    if (!restaurantExists) {
+                 //   val restaurantExists = checkIfRestaurantExists(restaurant.name)
+
+                   // val ownerAlreadyOwnesRestaurant = checkIfOwnerAlreadyHasRestaurant(owner)
+
+                 //   if (!restaurantExists) {
                         if (insertRestaurant(restaurant)) {
                             call.respond(OK)
                         } else {
                             call.respond(Conflict)
                         }
-                    }
+                //    }
                 }
             }
         }

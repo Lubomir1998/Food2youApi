@@ -48,11 +48,11 @@ suspend fun checkIfRestaurantExists(name: String): Boolean {
 }
 
 suspend fun insertRestaurant(restaurant: Restaurant): Boolean {
-    val restaurantExists = restaurants.findOne(Restaurant::name eq restaurant.name) != null
+    val restaurantExists = restaurants.findOneById(restaurant.id) != null
     if(!restaurantExists){
        return restaurants.insertOne(restaurant).wasAcknowledged()
     }
-    return false
+    return restaurants.updateOneById(restaurant.id, restaurant).wasAcknowledged()
 }
 
 suspend fun deleteRestaurant(restaurantId: String): Boolean {
@@ -69,6 +69,9 @@ suspend fun addFoodToRestaurant(food: Food): Boolean {
     return foods.insertOne(food).wasAcknowledged()
 }
 
+suspend fun checkIfOwnerAlreadyHasRestaurant(owner: String) : Boolean {
+    return restaurants.findOne(Restaurant::owner eq owner) != null
+}
 
 suspend fun getAllFoodForARestaurant(restaurantName: String): List<Food> {
     return foods.find(Food::restaurantName eq restaurantName).toList()
