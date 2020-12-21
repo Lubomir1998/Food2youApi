@@ -59,6 +59,10 @@ suspend fun deleteRestaurant(restaurantId: String): Boolean {
     return restaurants.deleteOne(Restaurant::id eq restaurantId).wasAcknowledged()
 }
 
+suspend fun deleteFood(foodId: String): Boolean {
+    return foods.deleteOne(Food::id eq foodId).wasAcknowledged()
+}
+
 suspend fun addReviewToRestaurant(id: String, preview: String): Boolean {
     val previews = restaurants.findOneById(id)?.previews ?: return false
     return restaurants.updateOneById(id, setValue(Restaurant::previews, previews + preview)).wasAcknowledged()
@@ -66,7 +70,11 @@ suspend fun addReviewToRestaurant(id: String, preview: String): Boolean {
 
 
 suspend fun addFoodToRestaurant(food: Food): Boolean {
-    return foods.insertOne(food).wasAcknowledged()
+    val foodExists = foods.findOneById(food.id) != null
+    if(!foodExists) {
+        return foods.insertOne(food).wasAcknowledged()
+    }
+    return foods.updateOneById(food.id, food).wasAcknowledged()
 }
 
 suspend fun checkIfOwnerAlreadyHasRestaurant(owner: String) : Boolean {

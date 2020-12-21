@@ -2,7 +2,9 @@ package com.example.routes
 
 import com.example.data.addFoodToRestaurant
 import com.example.data.collections.Food
+import com.example.data.deleteFood
 import com.example.data.getAllFoodForARestaurant
+import com.example.data.requests.DeleteFoodRequest
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
@@ -28,6 +30,29 @@ fun Route.foodRoute() {
                     }
 
                     if(addFoodToRestaurant(response)) {
+                        call.respond(OK)
+                    }
+                    else {
+                        call.respond(Conflict)
+                    }
+
+                }
+            }
+        }
+    }
+
+    route("/deleteFood") {
+        authenticate("owners") {
+            post {
+                withContext(Dispatchers.IO) {
+                    val request = try {
+                        call.receive<DeleteFoodRequest>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    if(deleteFood(request.id)) {
                         call.respond(OK)
                     }
                     else {
