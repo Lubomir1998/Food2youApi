@@ -12,13 +12,21 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.request.ContentTransformationException
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.routing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 fun Route.restaurantRoute() {
+
+    route("/getAllRestaurants") {
+        get {
+            withContext(Dispatchers.IO) {
+                val list = getAllRestaurants()
+
+                call.respond(OK, list)
+            }
+        }
+    }
 
     route("/addRestaurant") {
         authenticate("owners") {

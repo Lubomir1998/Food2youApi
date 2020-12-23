@@ -80,7 +80,6 @@ fun Route.foodRoute() {
     }
 
     route("/getFood/{restaurant}") {
-        authenticate("users") {
             get {
                 withContext(Dispatchers.IO) {
 
@@ -92,7 +91,6 @@ fun Route.foodRoute() {
 
                 }
             }
-        }
     }
 
 }

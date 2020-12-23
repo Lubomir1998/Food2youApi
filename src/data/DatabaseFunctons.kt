@@ -85,6 +85,9 @@ suspend fun getAllFoodForARestaurant(restaurantName: String): List<Food> {
     return foods.find(Food::restaurantName eq restaurantName).toList()
 }
 
+suspend fun getAllRestaurants(): List<Restaurant> {
+    return restaurants.find().toList()
+}
 
 
 
