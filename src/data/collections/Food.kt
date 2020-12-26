@@ -5,6 +5,7 @@ import org.bson.types.ObjectId
 
 data class Food(
     val name: String,
+    val description: String,
     val type: String,
     val weight: Int,
     val imgUrl: String,

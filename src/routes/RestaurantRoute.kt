@@ -56,6 +56,22 @@ fun Route.restaurantRoute() {
         }
     }
 
+    route("/getRestaurantOfOwner") {
+        authenticate("owners") {
+            get {
+                withContext(Dispatchers.IO) {
+
+                    val owner = call.principal<UserIdPrincipal>()!!.name
+
+                    val restaurant = getRestaurantOfOwner(owner)
+
+                    call.respond(OK, restaurant!!)
+
+                }
+            }
+        }
+    }
+
     route("/deleteRestaurant") {
         authenticate("owners") {
             post {
