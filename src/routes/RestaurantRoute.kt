@@ -163,7 +163,7 @@ fun Route.restaurantRoute() {
                     }
 
                     if (addReviewToRestaurant(request.id, request.preview)) {
-                        call.respond(OK)
+                        call.respond(OK, SimpleResponse(true, "Review added"))
                     } else {
                         call.respond(Conflict)
                     }
