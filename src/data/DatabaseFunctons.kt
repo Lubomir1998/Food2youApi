@@ -93,7 +93,14 @@ suspend fun getAllRestaurants(): List<Restaurant> {
     return restaurants.find().toList()
 }
 
+suspend fun likeRestaurant(restaurantId: String, user: String): Boolean {
+    val restaurant = restaurants.findOneById(restaurantId) ?: return false
+    return restaurants.updateOneById(restaurantId, setValue(Restaurant::users, restaurant.users + user)).wasAcknowledged()
+}
 
-
+suspend fun dislikeRestaurant(restaurantId: String, user: String): Boolean {
+    val restaurant = restaurants.findOneById(restaurantId) ?: return false
+    return restaurants.updateOneById(restaurantId, setValue(Restaurant::users, restaurant.users - user)).wasAcknowledged()
+}
 
 

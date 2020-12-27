@@ -4,6 +4,8 @@ import com.example.data.*
 import com.example.data.collections.Restaurant
 import com.example.data.requests.AddPreviewRequest
 import com.example.data.requests.DeleteRestaurantRequest
+import com.example.data.requests.LikeRestaurantRequest
+import com.example.data.responses.SimpleResponse
 import io.ktor.application.call
 import io.ktor.auth.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
@@ -87,6 +89,58 @@ fun Route.restaurantRoute() {
                     } else {
                         call.respond(Conflict)
                     }
+                }
+            }
+        }
+    }
+
+    route("/likeRestaurant") {
+        authenticate("users") {
+            post {
+                withContext(Dispatchers.IO) {
+                    val request = try {
+                        call.receive<LikeRestaurantRequest>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    val user = call.principal<UserIdPrincipal>()!!.name
+                    val restaurantId = request.restaurantId
+
+                    if(likeRestaurant(restaurantId, user)) {
+                        call.respond(OK, SimpleResponse(true, "You liked that restaurant"))
+                    }
+                    else {
+                        call.respond(Conflict)
+                    }
+
+                }
+            }
+        }
+    }
+
+    route("/dislikeRestaurant") {
+        authenticate("users") {
+            post {
+                withContext(Dispatchers.IO) {
+                    val request = try {
+                        call.receive<LikeRestaurantRequest>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    val user = call.principal<UserIdPrincipal>()!!.name
+                    val restaurantId = request.restaurantId
+
+                    if(dislikeRestaurant(restaurantId, user)) {
+                        call.respond(OK, SimpleResponse(true, "You disliked that restaurant"))
+                    }
+                    else {
+                        call.respond(Conflict)
+                    }
+
                 }
             }
         }
