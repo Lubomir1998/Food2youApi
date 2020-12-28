@@ -146,6 +146,19 @@ fun Route.restaurantRoute() {
         }
     }
 
+    route("/getRestaurantByType/{type}") {
+        get {
+            withContext(Dispatchers.IO) {
+                val type = call.parameters["type"]
+
+                val list = getRestaurantsByType(type!!)
+
+                call.respond(OK, list)
+
+            }
+        }
+    }
+
     route("/addPreview"){
         authenticate("users") {
             post {

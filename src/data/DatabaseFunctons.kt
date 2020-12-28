@@ -93,6 +93,10 @@ suspend fun getAllRestaurants(): List<Restaurant> {
     return restaurants.find().toList()
 }
 
+suspend fun getRestaurantsByType(type: String): List<Restaurant> {
+    return restaurants.find(Restaurant::type eq type).toList()
+}
+
 suspend fun likeRestaurant(restaurantId: String, user: String): Boolean {
     val restaurant = restaurants.findOneById(restaurantId) ?: return false
     return restaurants.updateOneById(restaurantId, setValue(Restaurant::users, restaurant.users + user)).wasAcknowledged()
