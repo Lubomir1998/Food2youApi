@@ -5,6 +5,7 @@ import com.example.data.collections.Restaurant
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
 import com.example.security.checkHashForPassword
+import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
@@ -87,6 +88,10 @@ suspend fun getAllFoodForARestaurant(restaurantName: String): List<Food> {
 
 suspend fun getRestaurantOfOwner(owner: String): Restaurant? {
     return restaurants.findOne(Restaurant::owner eq owner)
+}
+
+suspend fun getFavouriteRestaurants(email: String): List<Restaurant> {
+    return restaurants.find(Restaurant::users contains email).toList()
 }
 
 suspend fun getAllRestaurants(): List<Restaurant> {

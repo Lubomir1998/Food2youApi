@@ -146,6 +146,21 @@ fun Route.restaurantRoute() {
         }
     }
 
+    route("/getFavouriteRestaurants") {
+        authenticate("users") {
+            get {
+                withContext(Dispatchers.IO) {
+                    val email = call.principal<UserIdPrincipal>()!!.name
+
+                    val list = getFavouriteRestaurants(email)
+
+                    call.respond(OK, list)
+
+                }
+            }
+        }
+    }
+
     route("/getRestaurantByType/{type}") {
         get {
             withContext(Dispatchers.IO) {

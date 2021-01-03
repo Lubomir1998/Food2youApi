@@ -5,6 +5,7 @@ import com.example.data.checkIfPasswordIsCorrectRestaurants
 import com.example.data.requests.AccountRequest
 import com.example.data.responses.SimpleResponse
 import io.ktor.application.call
+import io.ktor.auth.*
 import io.ktor.request.ContentTransformationException
 import io.ktor.request.receive
 import io.ktor.response.respond
