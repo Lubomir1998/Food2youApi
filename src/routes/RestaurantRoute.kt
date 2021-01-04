@@ -40,19 +40,11 @@ fun Route.restaurantRoute() {
                         call.respond(BadRequest)
                         return@withContext
                     }
-                    val owner = call.principal<UserIdPrincipal>()!!.name
-
-                 //   val restaurantExists = checkIfRestaurantExists(restaurant.name)
-
-                   // val ownerAlreadyOwnesRestaurant = checkIfOwnerAlreadyHasRestaurant(owner)
-
-                 //   if (!restaurantExists) {
-                        if (insertRestaurant(restaurant)) {
-                            call.respond(OK)
-                        } else {
-                            call.respond(Conflict)
-                        }
-                //    }
+                     if (insertRestaurant(restaurant)) {
+                         call.respond(OK)
+                     } else {
+                         call.respond(Conflict)
+                     }
                 }
             }
         }

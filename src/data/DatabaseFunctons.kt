@@ -1,9 +1,6 @@
 package com.example.data
 
-import com.example.data.collections.Food
-import com.example.data.collections.Restaurant
-import com.example.data.collections.RestaurantAccount
-import com.example.data.collections.User
+import com.example.data.collections.*
 import com.example.security.checkHashForPassword
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
@@ -17,6 +14,7 @@ val users = database.getCollection<User>()
 val restaurants = database.getCollection<Restaurant>()
 val restaurantAccounts = database.getCollection<RestaurantAccount>()
 val foods = database.getCollection<Food>()
+val orderes = database.getCollection<Order>()
 
 suspend fun registerUser(user: User): Boolean {
     return users.insertOne(user).wasAcknowledged()
@@ -42,10 +40,6 @@ suspend fun checkIfUserExists(email: String): Boolean {
 
 suspend fun checkIfRestaurantAccountExists(username: String): Boolean {
     return restaurantAccounts.findOne(User::email eq username) != null
-}
-
-suspend fun checkIfRestaurantExists(name: String): Boolean {
-    return restaurants.findOne(Restaurant::name eq name) != null
 }
 
 suspend fun insertRestaurant(restaurant: Restaurant): Boolean {
@@ -78,10 +72,6 @@ suspend fun addFoodToRestaurant(food: Food): Boolean {
     return foods.updateOneById(food.id, food).wasAcknowledged()
 }
 
-suspend fun checkIfOwnerAlreadyHasRestaurant(owner: String) : Boolean {
-    return restaurants.findOne(Restaurant::owner eq owner) != null
-}
-
 suspend fun getAllFoodForARestaurant(restaurantName: String): List<Food> {
     return foods.find(Food::restaurantName eq restaurantName).toList()
 }
@@ -110,6 +100,10 @@ suspend fun likeRestaurant(restaurantId: String, user: String): Boolean {
 suspend fun dislikeRestaurant(restaurantId: String, user: String): Boolean {
     val restaurant = restaurants.findOneById(restaurantId) ?: return false
     return restaurants.updateOneById(restaurantId, setValue(Restaurant::users, restaurant.users - user)).wasAcknowledged()
+}
+
+suspend fun insertOrder(order: Order): Boolean {
+    return orderes.insertOne(order).wasAcknowledged()
 }
 
 

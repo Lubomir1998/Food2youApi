@@ -2,10 +2,7 @@ package com.example
 
 import com.example.data.checkIfPasswordIsCorrect
 import com.example.data.checkIfPasswordIsCorrectRestaurants
-import com.example.routes.foodRoute
-import com.example.routes.loginRoute
-import com.example.routes.registerRoute
-import com.example.routes.restaurantRoute
+import com.example.routes.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.CallLogging
@@ -36,6 +33,7 @@ fun Application.module(testing: Boolean = false) {
         loginRoute()
         restaurantRoute()
         foodRoute()
+        orderRoute()
     }
 
 }
