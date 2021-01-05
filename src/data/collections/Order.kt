@@ -5,6 +5,7 @@ import org.bson.types.ObjectId
 
 data class Order(
         val restaurant: String,
+        val address: String,
         val food : List<FoodItem>,
         val price: Float,
         val timestamp: Long,
