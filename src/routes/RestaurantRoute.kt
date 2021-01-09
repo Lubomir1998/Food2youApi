@@ -167,29 +167,28 @@ fun Route.restaurantRoute() {
     }
 
     route("/addPreview"){
-        authenticate("users") {
-            post {
-                withContext(Dispatchers.IO) {
-                    val request = try {
-                        call.receive<AddPreviewRequest>()
-                    } catch (e: ContentTransformationException) {
-                        call.respond(BadRequest)
-                        return@withContext
-                    }
+        post {
+            withContext(Dispatchers.IO) {
+                val request = try {
+                    call.receive<AddPreviewRequest>()
+                } catch (e: ContentTransformationException) {
+                    call.respond(BadRequest)
+                    return@withContext
+                }
 
-                    if (request.preview.isEmpty()) {
-                        call.respond(Conflict, "Please, type something")
-                        return@withContext
-                    }
+                if (request.preview.isEmpty()) {
+                    call.respond(Conflict, "Please, type something")
+                    return@withContext
+                }
 
-                    if (addReviewToRestaurant(request.id, request.preview)) {
-                        call.respond(OK, SimpleResponse(true, "Review added"))
-                    } else {
-                        call.respond(Conflict)
-                    }
+                if (addReviewToRestaurant(request.id, request.preview)) {
+                    call.respond(OK, SimpleResponse(true, "Review added"))
+                } else {
+                    call.respond(Conflict)
                 }
             }
         }
+
     }
 
 }
