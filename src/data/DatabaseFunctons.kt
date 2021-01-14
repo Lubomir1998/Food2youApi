@@ -10,11 +10,12 @@ import org.litote.kmongo.setValue
 
 val client = KMongo.createClient().coroutine
 val database = client.getDatabase("Food2youDB")
+
 val users = database.getCollection<User>()
 val restaurants = database.getCollection<Restaurant>()
 val restaurantAccounts = database.getCollection<RestaurantAccount>()
 val foods = database.getCollection<Food>()
-val orderes = database.getCollection<Order>()
+val orders = database.getCollection<Order>()
 
 suspend fun registerUser(user: User): Boolean {
     return users.insertOne(user).wasAcknowledged()
@@ -103,7 +104,7 @@ suspend fun dislikeRestaurant(restaurantId: String, user: String): Boolean {
 }
 
 suspend fun insertOrder(order: Order): Boolean {
-    return orderes.insertOne(order).wasAcknowledged()
+    return orders.insertOne(order).wasAcknowledged()
 }
 
 
