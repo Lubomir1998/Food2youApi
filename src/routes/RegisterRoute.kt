@@ -1,15 +1,14 @@
 package com.example.routes
 
-import com.example.data.checkIfRestaurantAccountExists
-import com.example.data.checkIfUserExists
+import com.example.data.*
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
-import com.example.data.registerRestaurant
-import com.example.data.registerUser
 import com.example.data.requests.AccountRequest
+import com.example.data.responses.PushNotification
 import com.example.data.responses.SimpleResponse
 import com.example.security.getHashWithSalt
 import io.ktor.application.call
+import io.ktor.auth.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.request.ContentTransformationException
@@ -66,6 +65,37 @@ fun Route.registerRoute() {
                 }
                 else {
                     call.respond(OK, SimpleResponse(false, "Account already exists"))
+                }
+            }
+        }
+    }
+
+    route("/registerUserToken/{user}") {
+        authenticate("users") {
+            post {
+                withContext(Dispatchers.IO) {
+
+                    val request = try {
+                        call.receive<PushNotification>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    val token = request.token
+                    val userEmail = call.parameters["user"]
+
+                    userEmail?.let {
+                        if (registerUserToken(it, token)) {
+                            call.respond(OK, SimpleResponse(true, "Token registered"))
+                        }
+                        else {
+                            call.respond(OK, SimpleResponse(false, "Error occurred"))
+                        }
+                    } ?: call.respond(OK, SimpleResponse(false, "Error occurred"))
+
+
+
                 }
             }
         }

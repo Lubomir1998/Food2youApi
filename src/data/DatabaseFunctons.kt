@@ -4,6 +4,7 @@ import com.example.data.collections.*
 import com.example.security.checkHashForPassword
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
+import org.litote.kmongo.coroutine.updateOne
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
 import org.litote.kmongo.setValue
@@ -106,5 +107,25 @@ suspend fun dislikeRestaurant(restaurantId: String, user: String): Boolean {
 suspend fun insertOrder(order: Order): Boolean {
     return orders.insertOne(order).wasAcknowledged()
 }
+
+suspend fun getAllOrdersForARestaurant(restaurant: String): List<Order> {
+    return orders.find(Order::restaurant eq restaurant).toList()
+}
+
+suspend fun registerUserToken(userEmail: String, token: String): Boolean {
+    val user = users.findOne(User::email eq userEmail) ?: return false
+    return users.updateOneById(user.id, setValue(User::token, token)).wasAcknowledged()
+}
+
+suspend fun updateOrderStatus(orderId: String, newStatus: String): Boolean {
+    return orders.updateOneById(orderId, setValue(Order::status, newStatus)).wasAcknowledged()
+}
+
+
+
+
+
+
+
 
 
