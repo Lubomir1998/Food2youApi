@@ -121,9 +121,13 @@ suspend fun updateOrderStatus(orderId: String, newStatus: String): Boolean {
     return orders.updateOneById(orderId, setValue(Order::status, newStatus)).wasAcknowledged()
 }
 
+suspend fun getAllWaitingOrdersForUser(email: String): List<Order> {
+    return orders.find(Order::email eq email).toList()
+}
 
-
-
+suspend fun changeOrderRecipientToken(email: String, token: String): Boolean {
+    return orders.updateMany(Order::email eq email, setValue(Order::recipient, token)).wasAcknowledged()
+}
 
 
 

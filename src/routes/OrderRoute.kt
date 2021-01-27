@@ -1,11 +1,9 @@
 package com.example.routes
 
+import com.example.data.*
 import com.example.data.collections.Order
-import com.example.data.getAllOrdersForARestaurant
-import com.example.data.insertOrder
 import com.example.data.requests.UpdateOrderStatusRequest
 import com.example.data.responses.SimpleResponse
-import com.example.data.updateOrderStatus
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -75,6 +73,42 @@ fun Route.orderRoute() {
                     else {
                         call.respond(OK, SimpleResponse(false, "Error occurred"))
                     }
+
+                }
+            }
+        }
+    }
+
+    route("/getAllWaitingOrdersForUser") {
+        authenticate("users") {
+            get {
+                withContext(Dispatchers.IO) {
+
+                    val email = call.principal<UserIdPrincipal>()!!.name
+
+                    val list = getAllWaitingOrdersForUser(email)
+                    call.respond(OK, list)
+
+                }
+            }
+        }
+    }
+
+    route("/changeOrderRecipientToken/{token}") {
+        authenticate("users") {
+            post {
+                withContext(Dispatchers.IO) {
+                    val email = call.principal<UserIdPrincipal>()!!.name
+                    val token = call.parameters["token"]
+
+                    token?.let {
+                        if (changeOrderRecipientToken(email, it)) {
+                            call.respond(OK, SimpleResponse(true, "Token updated successfully"))
+                        }
+                        else {
+                            call.respond(OK, SimpleResponse(false, "Error occurred"))
+                        }
+                    } ?: call.respond(OK, SimpleResponse(false, "Token is null"))
 
                 }
             }

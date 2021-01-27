@@ -4,7 +4,7 @@ import com.example.data.*
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
 import com.example.data.requests.AccountRequest
-import com.example.data.responses.PushNotification
+import com.example.data.responses.UserToken
 import com.example.data.responses.SimpleResponse
 import com.example.security.getHashWithSalt
 import io.ktor.application.call
@@ -26,14 +26,14 @@ fun Route.registerRoute() {
         post {
             withContext(Dispatchers.IO) {
                 val request = try {
-                    call.receive<AccountRequest>()
+                    call.receive<RegisterUserRequest>()
                 } catch (e: ContentTransformationException) {
                     call.respond(BadRequest)
                     return@withContext
                 }
                 val userExists = checkIfUserExists(request.email)
                 if(!userExists) {
-                    if (registerUser(User(request.email, getHashWithSalt(request.password)))) {
+                    if (registerUser(User(request.email, getHashWithSalt(request.password), request.token))) {
                         call.respond(OK, SimpleResponse(true, "Successfully created account"))
                     } else {
                         call.respond(OK, SimpleResponse(false, "An unknown error occurred"))
@@ -76,7 +76,7 @@ fun Route.registerRoute() {
                 withContext(Dispatchers.IO) {
 
                     val request = try {
-                        call.receive<PushNotification>()
+                        call.receive<UserToken>()
                     } catch (e: ContentTransformationException) {
                         call.respond(BadRequest)
                         return@withContext
