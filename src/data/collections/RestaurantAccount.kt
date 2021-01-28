@@ -6,6 +6,7 @@ import org.bson.types.ObjectId
 data class RestaurantAccount(
     val email: String,
     val password: String,
+    val token: String,
     @BsonId
     val id: String = ObjectId().toString()
 )

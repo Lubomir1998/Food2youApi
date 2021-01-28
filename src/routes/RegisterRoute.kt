@@ -3,7 +3,6 @@ package com.example.routes
 import com.example.data.*
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
-import com.example.data.requests.AccountRequest
 import com.example.data.responses.UserToken
 import com.example.data.responses.SimpleResponse
 import com.example.security.getHashWithSalt
@@ -50,14 +49,14 @@ fun Route.registerRoute() {
         post {
             withContext(Dispatchers.IO) {
                 val request = try {
-                    call.receive<AccountRequest>()
+                    call.receive<RegisterUserRequest>()
                 } catch (e: ContentTransformationException) {
                     call.respond(BadRequest)
                     return@withContext
                 }
                 val restaurantExists = checkIfRestaurantAccountExists(request.email)
                 if(!restaurantExists) {
-                    if (registerRestaurant(RestaurantAccount(request.email, getHashWithSalt(request.password)))) {
+                    if (registerRestaurant(RestaurantAccount(request.email, getHashWithSalt(request.password), request.token))) {
                         call.respond(OK, SimpleResponse(true, "Successfully created account"))
                     } else {
                         call.respond(OK, SimpleResponse(false, "An unknown error occurred"))
@@ -100,5 +99,69 @@ fun Route.registerRoute() {
             }
         }
     }
+
+    route("/registerOwnerToken/{owner}") {
+        authenticate("owners") {
+            post {
+                withContext(Dispatchers.IO) {
+
+                    val request = try {
+                        call.receive<UserToken>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    val token = request.token
+                    val ownerEmail = call.parameters["owner"]
+
+                    ownerEmail?.let {
+                        if (registerOwnerToken(it, token)) {
+                            call.respond(OK, SimpleResponse(true, "Token registered"))
+                        }
+                        else {
+                            call.respond(OK, SimpleResponse(false, "Error occurred"))
+                        }
+                    } ?: call.respond(OK, SimpleResponse(false, "Error occurred"))
+
+
+
+                }
+            }
+        }
+    }
+
+
+    route("/changeRestaurantToken/{owner}") {
+        authenticate("owners") {
+            post {
+                withContext(Dispatchers.IO) {
+
+                    val request = try {
+                        call.receive<UserToken>()
+                    } catch (e: ContentTransformationException) {
+                        call.respond(BadRequest)
+                        return@withContext
+                    }
+
+                    val token = request.token
+                    val ownerEmail = call.parameters["owner"]
+
+                    ownerEmail?.let {
+                        if (changeRestaurantToken(it, token)) {
+                            call.respond(OK, SimpleResponse(true, "Token updated successfully"))
+                        }
+                        else {
+                            call.respond(OK, SimpleResponse(false, "Error occurred"))
+                        }
+                    } ?: call.respond(OK, SimpleResponse(false, "Error occurred"))
+
+
+
+                }
+            }
+        }
+    }
+
 
 }
