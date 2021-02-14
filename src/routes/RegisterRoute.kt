@@ -3,6 +3,7 @@ package com.example.routes
 import com.example.data.*
 import com.example.data.collections.RestaurantAccount
 import com.example.data.collections.User
+import com.example.data.requests.RegisterUserRequest
 import com.example.data.responses.UserToken
 import com.example.data.responses.SimpleResponse
 import com.example.security.getHashWithSalt

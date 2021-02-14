@@ -1,4 +1,4 @@
-package com.example.routes
+package com.example.data.requests
 
 data class RegisterUserRequest(
     val email: String,

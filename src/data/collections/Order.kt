@@ -8,11 +8,14 @@ data class Order(
         val address: String,
         val recipient: String,
         val email: String,
-        val phoneNumber: Long,
+        val phoneNumber: String,
         val food : List<FoodItem>,
         val price: Float,
         val timestamp: Long,
         val status: String,
+        val resImgUrl: String,
+        val restaurantName: String,
+        var resId: String = "",
         @BsonId
         val id: String = ObjectId().toString()
 )

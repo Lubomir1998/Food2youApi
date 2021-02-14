@@ -104,7 +104,13 @@ suspend fun dislikeRestaurant(restaurantId: String, user: String): Boolean {
 }
 
 suspend fun insertOrder(order: Order): Boolean {
-    return orders.insertOne(order).wasAcknowledged()
+    val orderExists = orders.findOneById(order.id) != null
+    return if(!orderExists) {
+        orders.insertOne(order).wasAcknowledged()
+    }
+    else {
+        orders.updateOneById(order.id, order).wasAcknowledged()
+    }
 }
 
 suspend fun getAllOrdersForARestaurant(restaurant: String): List<Order> {
