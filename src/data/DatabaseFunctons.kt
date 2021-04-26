@@ -16,6 +16,7 @@ val restaurants = database.getCollection<Restaurant>()
 val restaurantAccounts = database.getCollection<RestaurantAccount>()
 val foods = database.getCollection<Food>()
 val orders = database.getCollection<Order>()
+val tracks = database.getCollection<Track>()
 
 suspend fun registerUser(user: User): Boolean {
     return users.insertOne(user).wasAcknowledged()
@@ -144,6 +145,26 @@ suspend fun changeOrderRecipientToken(email: String, token: String): Boolean {
     return orders.updateMany(Order::email eq email, setValue(Order::recipient, token)).wasAcknowledged()
 }
 
+suspend fun insertTrack(track: Track, latitude: Double, longitude: Double): Boolean {
+    if(tracks.findOneById(track.id) == null) {
+        return tracks.insertOne(track).wasAcknowledged()
+    }
+    val currentCoordinates = tracks.findOneById(track.id)?.coordinates
+    return if(currentCoordinates != null) {
+        tracks.updateOneById(
+            track.id, setValue(Track::coordinates, currentCoordinates + Coordinates(latitude, longitude))
+        ).wasAcknowledged()
+    }
+    else false
+}
+
+suspend fun deleteTracks(orderId: String): Boolean {
+    return tracks.deleteOne(Track::orderId eq orderId).wasAcknowledged()
+}
+
+suspend fun getTrack(orderId: String): Track? {
+    return tracks.findOne(Track::orderId eq orderId)
+}
 
 
 
